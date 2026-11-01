@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bonus week: one basket, seven days</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --celery: #E6EDD6;
+    --surface: #FFFFFF;
+    --aubergine: #2B1B3D;
+    --aubergine-soft: #4A3A5C;
+    --basil: #3E7C4A;
+    --butter: #FFE27A;
+    --beet: #B8336A;
+    --rule: #D5DCC6;
+    --muted: #6A6274;
+    --price: "Bowlby One", "Arial Black", sans-serif;
+    --sans: "Instrument Sans", "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--celery); }
+  body { margin: 0; color: var(--aubergine); font: 16px/1.5 var(--sans); }
+  :focus-visible { outline: 3px solid var(--beet); outline-offset: 2px; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+  /* Header band */
+  .band { background: var(--aubergine); color: #F2ECF7; }
+  .band .wrap { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 18px 32px; padding-top: 22px; padding-bottom: 22px; }
+  .brand { font: 1.6rem/1 var(--price); letter-spacing: .01em; margin: 0; }
+  .brand small { display: block; font: 500 .9rem/1.4 var(--sans); color: #CBBFD8; margin-top: 6px; }
+  form { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: end; }
+  label { display: grid; gap: 3px; font-size: .8rem; color: #CBBFD8; }
+  input, select { font: 600 1rem var(--sans); color: var(--aubergine); width: 7.2rem; padding: 7px 10px; border: 0; border-radius: 8px; background: #F2ECF7; }
+  button.go { font: 1rem var(--price); padding: 10px 20px; border: 0; border-radius: 999px; background: var(--butter); color: var(--aubergine); cursor: pointer; }
+  button.go:hover { background: #FFEB9E; }
+  button.go[disabled] { opacity: .7; cursor: progress; }
+
+  /* Hero: shelf price tag + reasoning */
+  .hero { display: grid; grid-template-columns: minmax(260px, 360px) 1fr; gap: 40px 56px; align-items: center; padding: 48px 0 24px; }
+  .pricetag {
+    position: relative; justify-self: start; background: var(--butter); padding: 26px 34px 22px 58px;
+    clip-path: polygon(28px 0, 100% 0, 100% 100%, 28px 100%, 0 50%);
+    transform: rotate(-3deg); filter: drop-shadow(0 10px 0 rgba(43, 27, 61, .12));
+  }
+  .pricetag::before { content: ""; position: absolute; left: 22px; top: 50%; width: 14px; height: 14px; margin-top: -7px; border-radius: 50%; background: var(--celery); box-shadow: inset 0 0 0 2px rgba(43,27,61,.25); }
+  .pricetag .was { font-weight: 600; font-size: .95rem; }
+  .pricetag .was s { text-decoration-thickness: 2px; text-decoration-color: var(--beet); }
+  .pricetag .amount { font: clamp(4rem, 9vw, 6.2rem)/.9 var(--price); display: flex; align-items: flex-start; letter-spacing: -.02em; margin: 4px 0; }
+  .pricetag .amount sup { font-size: .42em; line-height: 1; margin: .14em 0 0 .06em; }
+  .pricetag .amount .cur { font-size: .42em; margin: .14em .06em 0 0; }
+  .pricetag .per { font-weight: 700; }
+  .pricetag .save { display: inline-block; margin-top: 10px; background: var(--beet); color: #fff; font-weight: 700; padding: 3px 10px; border-radius: 999px; font-size: .9rem; }
+  .why p { font-size: clamp(1.1rem, 1.8vw, 1.35rem); line-height: 1.5; margin: 0 0 18px; max-width: 58ch; }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; }
+  .fact { background: var(--surface); border-radius: 999px; padding: 6px 14px; font-size: .9rem; }
+  .fact b { font-weight: 700; }
+  .fact.warn { background: #F7DCE7; }
+
+  h2 { font: clamp(1.6rem, 3vw, 2.1rem)/1.1 var(--price); margin: 64px 0 6px; letter-spacing: .005em; }
+  .lede { color: var(--muted); margin: 0 0 20px; max-width: 64ch; }
+
+  /* Week board */
+  .board { background: var(--surface); border-radius: 18px; overflow: hidden; }
+  .row { display: grid; grid-template-columns: 112px repeat(3, minmax(0, 1fr)) 132px; }
+  .row + .row { border-top: 1px solid var(--rule); }
+  .row.head { background: var(--aubergine); color: #F2ECF7; font-weight: 600; font-size: .9rem; }
+  .row.head > div { padding: 10px 16px; }
+  .dayname { padding: 18px 16px; font: 1.35rem/1 var(--price); }
+  .dayname small { display: block; font: 600 .75rem/1.3 var(--sans); color: var(--muted); margin-top: 6px; }
+  .meal { padding: 16px; border-left: 1px solid var(--rule); }
+  .meal h3 { font-size: 1rem; line-height: 1.3; font-weight: 700; margin: 0 0 4px; }
+  .meal .nums { font-size: .82rem; color: var(--muted); font-variant-numeric: tabular-nums; margin-bottom: 10px; }
+  .meal .nums b { color: var(--aubergine); font-weight: 600; }
+  .meal-label { display: none; font-size: .78rem; font-weight: 600; color: var(--muted); text-transform: capitalize; }
+  .daytotal { padding: 16px; border-left: 1px solid var(--rule); background: #F7F9F1; font-size: .85rem; font-variant-numeric: tabular-nums; }
+  .daytotal b { display: block; font: 1.15rem var(--price); }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chip {
+    font: 500 .76rem/1 var(--sans); color: var(--aubergine); display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 8px 5px 6px; border-radius: 999px; border: 1px solid var(--rule); background: var(--surface); cursor: pointer;
+    transition: opacity .15s, background .15s;
+  }
+  .chip i { width: 9px; height: 9px; border-radius: 50%; background: var(--c); flex: none; }
+  .chip.promo { background: var(--butter); border-color: var(--butter); }
+  .chip .re { font-style: normal; font-weight: 700; color: var(--basil); }
+  .board.focus .chip:not(.lit) { opacity: .22; }
+  .board.focus .chip.lit { box-shadow: 0 0 0 2px var(--c); }
+  .board.focus .meal:not(:has(.lit)) h3 { opacity: .45; }
+  .key { display: flex; flex-wrap: wrap; gap: 14px; font-size: .85rem; color: var(--muted); margin-bottom: 12px; align-items: center; }
+  .key .chip { cursor: default; }
+
+  /* Ingredient tracking */
+  .jars { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+  .jar { background: var(--surface); border-radius: 14px; padding: 16px 18px; border-top: 6px solid var(--c); }
+  .jar header { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+  .jar h3 { margin: 0; font-size: 1.05rem; }
+  .jar .src { font-size: .82rem; color: var(--muted); }
+  .jar .left { font: 1rem var(--price); white-space: nowrap; }
+  .bar { display: flex; height: 26px; margin: 12px 0 8px; border-radius: 6px; overflow: hidden; background: repeating-linear-gradient(-45deg, #F1F3EA 0 6px, #E2E7D6 6px 7px); }
+  .seg { background: var(--c); border-right: 2px solid var(--surface); color: #fff; font-size: .7rem; font-weight: 600; display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden; }
+  .seg:nth-child(even) { filter: brightness(1.15); }
+  .jar .status { font-size: .82rem; font-weight: 600; }
+  .status.risk { color: var(--beet); }
+  .status.ok { color: var(--basil); }
+  .jar details { font-size: .85rem; color: var(--muted); margin-top: 6px; }
+  .jar summary { cursor: pointer; width: max-content; }
+  .jar ul { margin: 6px 0 0; padding-left: 18px; }
+
+  /* Receipts */
+  .receipts { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 28px; align-items: start; }
+  .receipt {
+    background: var(--surface); padding: 22px 22px 34px; position: relative;
+    --zig: 10px;
+    -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--zig)) 100%;
+            mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--zig)) 100%;
+  }
+  .receipt h3 { font: 1.3rem var(--price); margin: 0 0 2px; text-align: center; }
+  .receipt .sub { text-align: center; font-size: .8rem; color: var(--muted); margin-bottom: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; font-variant-numeric: tabular-nums; }
+  td { padding: 6px 0; vertical-align: top; border-top: 1px dashed var(--rule); }
+  td.num { text-align: right; white-space: nowrap; padding-left: 10px; }
+  td .pk { color: var(--muted); font-size: .8rem; }
+  td s { color: var(--muted); font-size: .8rem; display: block; }
+  td.promo-name::after { content: "bonus"; margin-left: 6px; font-size: .68rem; font-weight: 700; background: var(--butter); padding: 1px 6px; border-radius: 999px; vertical-align: 1px; }
+  tr.total td { border-top: 2px solid var(--aubergine); font-weight: 700; font-size: 1rem; padding-top: 10px; }
+  .pantry { background: var(--aubergine); color: #F2ECF7; border-radius: 18px; padding: 22px; }
+  .pantry h3 { font: 1.2rem/1.2 var(--price); margin: 0 0 6px; }
+  .pantry p { color: #CBBFD8; font-size: .88rem; margin: 0 0 14px; }
+  .pantry ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .pantry li { background: var(--aubergine-soft); padding: 4px 10px; border-radius: 999px; font-size: .82rem; }
+  .pantry li.buy { background: var(--butter); color: var(--aubergine); font-weight: 600; }
+
+  footer { padding: 56px 0 40px; color: var(--muted); font-size: .85rem; }
+  .error { background: #F7DCE7; color: var(--beet); font-weight: 600; padding: 16px 20px; border-radius: 12px; margin-top: 40px; }
+  .loading { padding: 80px 0; font: 1.4rem var(--price); color: var(--aubergine-soft); }
+
+  @media (max-width: 980px) {
+    .hero { grid-template-columns: 1fr; padding-top: 36px; }
+    .row.head { display: none; }
+    .row { grid-template-columns: 1fr; }
+    .dayname { padding-bottom: 6px; display: flex; justify-content: space-between; align-items: baseline; }
+    .dayname small { margin: 0; }
+    .meal, .daytotal { border-left: 0; }
+    .meal { padding-top: 10px; }
+    .meal-label { display: block; }
+    .daytotal { display: none; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pricetag { animation: swing 900ms cubic-bezier(.3, 1.6, .5, 1) both; transform-origin: 22px 50%; }
+    @keyframes swing { 0% { transform: rotate(-14deg); } 100% { transform: rotate(-3deg); } }
+  }
+</style>
+</head>
+<body>
+<div class="band">
+  <div class="wrap">
+    <h1 class="brand">Bonus week<small>One basket of offers, cooked across seven days</small></h1>
+    <form id="form">
+      <label>Weekly budget (€)<input name="budget" type="number" min="10" max="1000" step="1" value="75" required></label>
+      <label>People<input name="people" type="number" min="1" max="8" value="1" required></label>
+      <label>Calories per day<input name="kcal_target" type="number" min="1200" max="4000" step="50" value="2000" required></label>
+      <label>Protein per day (g)<input name="protein_target" type="number" min="30" max="300" step="5" value="120" required></label>
+      <label>Max stores<select name="max_stores"><option>1</option><option selected>2</option><option>3</option></select></label>
+      <button class="go" type="submit">Plan my week</button>
+    </form>
+  </div>
+</div>
+
+<main class="wrap" id="out" aria-live="polite"><p class="loading">Checking this week's offers…</p></main>
+
+<script>
+const out = document.getElementById("out");
+const form = document.getElementById("form");
+const PALETTE = ["#3E7C4A", "#B8336A", "#2F6690", "#B86E12", "#6B4E9B", "#1F7A7A", "#8C5E3C", "#5A7D1F", "#C0462B", "#4A5899", "#9C2C5C", "#3D6B5A", "#7A6A12", "#5F3B6E"];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const eur = n => "€" + Number(n).toFixed(2);
+const qty = g => g >= 1000 ? +(g / 1000).toFixed(2) + " kg" : Math.round(g) + " g";
+let colors = {};
+
+function priceTag(s) {
+  const [whole, cents] = Number(s.total_cost).toFixed(2).split(".");
+  return `
+    <div class="pricetag" aria-label="Total ${eur(s.total_cost)} per week, saving ${eur(s.savings)}">
+      <div class="was">Without offers <s>${eur(s.total_cost + s.savings)}</s></div>
+      <div class="amount"><span class="cur">€</span>${whole}<sup>${cents}</sup></div>
+      <div class="per">for the whole week</div>
+      <span class="save">You save ${eur(s.savings)}</span>
+    </div>`;
+}
+
+function renderHero(s, req) {
+  const facts = [
+    `<span class="fact"><b>${s.promo_pct}%</b> of items on offer</span>`,
+    `<span class="fact">Shop at <b>${s.stores.map(esc).join(" + ")}</b></span>`,
+    `<span class="fact"><b>${s.avg_calories}</b> kcal and <b>${s.avg_protein} g</b> protein a day</span>`,
+    s.within_budget ? `<span class="fact">${eur(req.budget - s.total_cost)} under budget</span>`
+                    : `<span class="fact warn">${eur(s.total_cost - req.budget)} over budget</span>`,
+    s.waste_risk.length ? `<span class="fact warn">Watch leftovers: <b>${s.waste_risk.map(esc).join(", ")}</b></span>` : "",
+  ];
+  return `<section class="hero">${priceTag(s)}<div class="why"><p>${esc(s.text)}</p><div class="facts">${facts.join("")}</div></div></section>`;
+}
+
+function chip(name, m) {
+  const promo = m.discounted.includes(name), reused = m.reused.includes(name);
+  const title = [promo && "On offer", reused && "Bought earlier this week"].filter(Boolean).join(", ") || "Bought for this meal";
+  return `<button type="button" class="chip${promo ? " promo" : ""}" style="--c:${colors[name] || "#999"}" data-ing="${esc(name)}" title="${title}">`
+    + `<i></i>${esc(name)}${reused ? ` <em class="re" aria-label="reused">↺</em>` : ""}</button>`;
+}
+
+function renderBoard(week) {
+  const rows = week.map(d => `
+    <div class="row">
+      <div class="dayname">${esc(d.day.slice(0, 3))}<small>${d.portion_scale !== 1 ? `Portions ×${d.portion_scale}` : esc(d.day)}</small></div>
+      ${d.meals.map(m => `
+        <article class="meal">
+          <span class="meal-label">${esc(m.meal)}</span>
+          <h3>${esc(m.recipe)}</h3>
+          <div class="nums"><b>${m.calories}</b> kcal, <b>${m.protein} g</b> protein, <b>${eur(m.cost)}</b></div>
+          <div class="chips">${m.ingredients.map(n => chip(n, m)).join("")}</div>
+        </article>`).join("")}
+      <div class="daytotal"><b>${eur(d.cost)}</b>${d.calories} kcal<br>${d.protein} g protein</div>
+    </div>`).join("");
+  return `
+    <h2>Your week, one basket</h2>
+    <p class="lede">The same few ingredients come back across the week. Tap any ingredient to see every meal it goes into.</p>
+    <div class="key">
+      <span class="chip promo"><i style="background:var(--aubergine)"></i>On offer this week</span>
+      <span class="chip"><i style="background:var(--aubergine)"></i>Regular price</span>
+      <span class="chip"><i style="background:var(--aubergine)"></i>Already in your kitchen <em class="re">↺</em></span>
+    </div>
+    <div class="board" id="board">
+      <div class="row head" aria-hidden="true"><div></div><div>Breakfast</div><div>Lunch</div><div>Dinner</div><div>Day total</div></div>
+      ${rows}
+    </div>`;
+}
+
+function renderJars(rows) {
+  const jars = rows.map(t => {
+    const segs = t.uses.map(u => {
+      const pct = 100 * u.grams / t.purchased_g;
+      return `<div class="seg" style="width:${pct}%" title="${esc(`${u.day} ${u.meal}: ${u.recipe}, ${qty(u.grams)}`)}">${pct > 11 ? esc(u.day.slice(0, 3)) : ""}</div>`;
+    }).join("");
+    const cls = t.status === "Waste risk" ? "risk" : t.status === "Fully used" || t.status === "Small remainder" ? "ok" : "";
+    return `
+      <article class="jar" style="--c:${colors[t.ingredient]}">
+        <header><div><h3>${esc(t.ingredient)}</h3><div class="src">${esc(t.purchased_label)}, ${t.meal_count} meal${t.meal_count === 1 ? "" : "s"}</div></div>
+          <span class="left">${qty(t.remaining_g)} left</span></header>
+        <div class="bar" role="img" aria-label="${esc(t.uses.map(u => `${u.day}: ${qty(u.grams)}`).join(", "))}, ${qty(t.remaining_g)} remaining">${segs}</div>
+        <span class="status ${cls}">${esc(t.status)}</span>
+        <details><summary>Show each meal</summary><ul>
+          ${t.uses.map(u => `<li>${esc(u.day)} ${esc(u.meal)}: ${qty(u.grams)}, ${esc(u.recipe)}</li>`).join("")}
+          <li><b>Remaining: ${qty(t.remaining_g)}</b></li>
+        </ul></details>
+      </article>`;
+  }).join("");
+  return `
+    <h2>Where every gram goes</h2>
+    <p class="lede">Each bar is one purchase, split into the portions each meal uses. The striped part is what's left on Sunday night.</p>
+    <div class="jars">${jars}</div>`;
+}
+
+function renderReceipts(list, pantry) {
+  const byStore = {};
+  list.forEach(i => (byStore[i.store] ??= []).push(i));
+  const receipts = Object.entries(byStore).map(([store, items]) => {
+    const total = items.reduce((a, i) => a + i.price, 0);
+    const saved = items.reduce((a, i) => a + i.regular_price - i.price, 0);
+    return `
+      <div class="receipt">
+        <h3>${store === "Any" ? "Pantry restock" : esc(store)}</h3>
+        <div class="sub">${items.length} item${items.length === 1 ? "" : "s"}${saved > 0 ? `, ${eur(saved)} saved` : ""}</div>
+        <table>${items.map(i => `
+          <tr><td class="${i.on_promo ? "promo-name" : ""}">${i.packs} × ${esc(i.ingredient)}<br><span class="pk">${esc(i.pack_size)}</span></td>
+            <td class="num">${i.on_promo ? `<s>${eur(i.regular_price)}</s>` : ""}${eur(i.price)}</td></tr>`).join("")}
+          <tr class="total"><td>Total</td><td class="num">${eur(total)}</td></tr>
+        </table>
+      </div>`;
+  }).join("");
+  const pantryCard = `
+    <div class="pantry">
+      <h3>${esc(pantry.label)}</h3>
+      <p>Not counted in your budget. Yellow ones are needed in large amounts this week, so they're on the list.</p>
+      <ul>${pantry.items.map(p => `<li class="${p.buy ? "buy" : ""}" title="${qty(p.weekly_g)} this week">${esc(p.name)}</li>`).join("")}</ul>
+    </div>`;
+  return `<h2>Shopping list</h2><p class="lede">One receipt per store, cheapest offer for each item.</p><div class="receipts">${receipts}${pantryCard}</div>`;
+}
+
+function wireBoard() {
+  const board = document.getElementById("board");
+  let pinned = null;
+  const light = name => {
+    board.classList.toggle("focus", !!name);
+    board.querySelectorAll(".chip").forEach(c => {
+      const on = c.dataset.ing === name;
+      c.classList.toggle("lit", on);
+      c.setAttribute("aria-pressed", on && pinned === name ? "true" : "false");
+    });
+  };
+  board.addEventListener("click", e => {
+    const c = e.target.closest(".chip[data-ing]");
+    if (!c) return;
+    pinned = pinned === c.dataset.ing ? null : c.dataset.ing;
+    light(pinned);
+  });
+  board.addEventListener("mouseover", e => {
+    const c = e.target.closest(".chip[data-ing]");
+    if (c && !pinned) light(c.dataset.ing);
+  });
+  board.addEventListener("mouseleave", () => { if (!pinned) light(null); });
+}
+
+async function plan(e) {
+  e?.preventDefault();
+  const btn = form.querySelector("button");
+  btn.disabled = true; btn.textContent = "Planning…";
+  try {
+    const res = await fetch("/api/plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(Object.fromEntries(new FormData(form))) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "The planner could not build a week.");
+    colors = {};
+    data.tracking.forEach((t, i) => { colors[t.ingredient] = PALETTE[i % PALETTE.length]; });
+    out.innerHTML = renderHero(data.summary, data.request) + renderBoard(data.week)
+      + renderJars(data.tracking) + renderReceipts(data.shopping_list, data.pantry)
+      + `<footer>Prices and offers are sample data for Lidl, Albert Heijn and Jumbo.</footer>`;
+    wireBoard();
+  } catch (err) {
+    out.innerHTML = `<p class="error">${esc(err.message)} Adjust the settings and plan again.</p>`;
+  } finally {
+    btn.disabled = false; btn.textContent = "Plan my week";
+  }
+}
+form.addEventListener("submit", plan);
+plan();
+</script>
+</body>
+</html>
